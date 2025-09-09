@@ -14,39 +14,125 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <!-- tailwind cdn -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style>
+        /* hearts*/
+        .card .material-symbols-outlined {
+            cursor: pointer;
+            user-select: none;
+            transition: transform .08s ease, color .2s;
+        }
+
+        .card .material-symbols-outlined:hover {
+            color: #e11d48;
+        }
+
+
+        .card .material-symbols-outlined:active {
+            transform: scale(1.15);
+        }
+
+        /* responsive */
+        @media (max-width:1024px) {
+            #main-container {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+            }
+
+            #service-box {
+                grid-column: span 12 / span 12;
+                margin-right: 0;
+            }
+
+            aside.bg-white {
+                grid-column: span 12 / span 12;
+            }
+        }
+
+        @media (max-width:768px) {
+            .hotline-services {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width:769px) and (max-width:1024px) {
+            .hotline-services {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* call-history list  */
+        .history-list {
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            gap: .5rem;
+            padding: .75rem 0;
+        }
+
+        .history-item+.history-item {
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .history-name {
+            font-weight: 600;
+        }
+
+        .history-num {
+            font-size: .875rem;
+            color: #6b7280;
+        }
+
+        .history-time {
+            font-size: .75rem;
+            color: #9ca3af;
+        }
+
+
+        .call:hover {
+            background: #16a34a;
+        }
+    </style>
+
 </head>
 
 <body class="bg-[#F5FFF6] h-[100vh]">
     <!-- nav section -->
-    <header class="flex justify-between items-center bg-white shadow px-6 py-3">
-
-        <div class="logo flex items-center gap-4 pl-4">
-            <img src="assets/logo.png" alt="" class="h-[45px]">
-            <div>
-                <h1 class="text-[#006747] font-bold text-xl">Emergency <br> Service</h1>
-            </div>
+    <header class="flex flex-wrap justify-between items-center bg-white shadow px-4 md:px-6 py-3">
+    <!-- Logo -->
+    <div class="logo flex items-center gap-4">
+        <img src="assets/logo.png" alt="" class="h-[45px]">
+        <div>
+            <h1 class="text-[#006747] font-bold text-xl">Emergency <br class="md:hidden"> Service</h1>
         </div>
-        <div class="flex gap-4 items-center">
-            <!-- Heart Badge -->
-            <div class="flex items-center gap-2 bg-[#41FF6B1A] px-4 py-2 rounded-full">
-                <span class="font-bold">0</span>
-                <img src="assets/heart.png" alt="" class="w-5 h-5">
-            </div>
+    </div>
 
-            <!-- Coin Badge -->
-            <div class="flex items-center gap-2 bg-[#41FF6B1A] px-4 py-2 rounded-full">
-                <span class="font-bold">100</span>
-                <img src="assets/coin.png" alt="" class="w-5 h-5">
-            </div>
-
-            <!-- Copy Button -->
-            <button class="bg-[#00A63E] hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-full shadow">
-                2 Copy
-            </button>
+    <!-- Badges & Button -->
+    <div class="flex flex-wrap gap-2 md:gap-4 items-center mt-2 md:mt-0">
+        <!-- Heart Badge -->
+        <div class="flex items-center gap-2 bg-[#41FF6B1A] px-4 py-2 rounded-full">
+            <span class="font-bold">0</span>
+            <img src="assets/heart.png" alt="" class="w-5 h-5">
         </div>
-    </header>
+
+        <!-- Coin Badge -->
+        <div class="flex items-center gap-2 bg-[#41FF6B1A] px-4 py-2 rounded-full">
+            <span class="font-bold">100</span>
+            <img src="assets/coin.png" alt="" class="w-5 h-5">
+        </div>
+
+        <!-- Copy Button -->
+        <button class="bg-[#00A63E] hover:bg-green-600 text-white font-semibold px-6 py-2 rounded-full shadow">
+            2 Copy
+        </button>
+    </div>
+</header>
+
     <!-- hero Section -->
-    <section class="text-white py-8 px-4 text-center w-full"
+    <section class="text-white py-8 px-4 text-center w-full items-center"
         style="background: linear-gradient(to right, #013223, #006747, #013223);">
         <!-- Logo -->
         <img src="assets/logo-dark.png" alt="Gov Logo" class="w-16 h-16 mx-auto mb-4">
@@ -397,7 +483,7 @@
             </section>
             <aside id="call history-box" class="bg-white col-span-3 shadow rounded-[10px]">
 
-                <div class="flex justify-between items-center mt-5 mr-3 ml-3 gap-6" >
+                <div class="flex justify-between items-center mt-5 mr-3 ml-3 gap-6">
                     <div class="text-xl font-semibold">
                         <h5>Call History</h5>
                     </div>
@@ -411,6 +497,162 @@
             </div>
         </section>
     </main>
+
+    <!-- funtionalities -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            //   navbar elements
+            var heartCountSpan = document.querySelector('header img[src$="heart.png"]').previousElementSibling;
+            var coinCountSpan = document.querySelector('header img[src$="coin.png"]').previousElementSibling;
+            var copyCountBtn = document.querySelector('header button');
+
+            var heartCount = Number(heartCountSpan.innerText);
+            var coins = Number(coinCountSpan.innerText);
+
+            // Copy count button 
+            var copyCountText = copyCountBtn.innerText;
+            var copyCount = Number(copyCountText[0]);
+            copyCountBtn.innerText = copyCount + " Copy";
+
+            // History container 
+            var historyAside = document.getElementsByTagName("aside")[0];
+            var historyList = document.createElement("div");
+            historyList.style.margin = "12px";
+            historyAside.appendChild(historyList);
+
+            // Clear button 
+            var clearBtn = historyAside.getElementsByTagName("button")[0];
+            clearBtn.onclick = function () {
+                historyList.innerHTML = "";
+            };
+
+            // clean
+            function cleanText(text) {
+                while (text[0] === " ") {
+                    text = text.substring(1);
+                }
+                while (text[text.length - 1] === " ") {
+                    text = text.substring(0, text.length - 1);
+                }
+
+                var result = "";
+                for (var i = 0; i < text.length; i++) {
+                    if (text[i] === " " && text[i - 1] === " ") {
+
+                    } else {
+                        result = result + text[i];
+                    }
+                }
+                return result;
+            }
+
+            function cleanNumber(num) {
+                while (num[0] === " ") {
+                    num = num.substring(1);
+                }
+                while (num[num.length - 1] === " ") {
+                    num = num.substring(0, num.length - 1);
+                }
+
+
+                var result = "";
+                for (var i = 0; i < num.length; i++) {
+                    if (num[i] !== " ") {
+                        result = result + num[i];
+                    }
+                }
+                return result;
+            }
+
+           // History add
+function addToHistory(name, number, timeText) {
+    var row = document.createElement("div");
+    row.style.display = "flex";
+    row.style.justifyContent = "space-between";
+    row.style.alignItems = "flex-start";
+    row.style.borderBottom = "1px solid #ddd";
+    row.style.padding = "6px 0";
+
+    var left = document.createElement("div");
+
+    var p1 = document.createElement("p");
+    p1.innerText = name;
+    p1.style.fontWeight = "bold";
+
+    var p2 = document.createElement("p");
+    p2.innerText = number;
+    p2.style.fontSize = "14px";
+    p2.style.color = "gray";
+
+    var p3 = document.createElement("p");
+    p3.innerText = timeText;
+    p3.style.fontSize = "12px";
+    p3.style.color = "darkgray";
+
+    left.appendChild(p1);
+    left.appendChild(p2);
+    left.appendChild(p3);
+
+    row.appendChild(left);
+
+    historyList.insertBefore(row, historyList.firstChild);
+}
+
+
+            var cards = document.getElementsByClassName("card");
+
+            for (var i = 0; i < cards.length; i++) {
+                var card = cards[i];
+
+                // Heart icon
+                var heartIcon = card.getElementsByClassName("material-symbols-outlined")[0];
+                heartIcon.onclick = function () {
+                    heartCount = heartCount + 1;
+                    heartCountSpan.innerText = heartCount;
+                };
+
+                // Copy button
+                var copyBtn = card.getElementsByTagName("button")[0];
+                copyBtn.onclick = function () {
+                    var cardBody = this.parentNode.parentNode; // card-actions -> card-body
+                    var allH2 = cardBody.getElementsByTagName("h2");
+                    var number = cleanNumber(allH2[1].innerText);
+
+                    navigator.clipboard.writeText(number);
+                    alert("Hotline copied: " + number);
+
+                    copyCount = copyCount + 1;
+                    copyCountBtn.innerText = copyCount + " Copy";
+                };
+
+                // Call button
+                var callBtn = card.getElementsByTagName("button")[1];
+                callBtn.onclick = function () {
+                    var cardBody = this.parentNode.parentNode;
+                    var allH2 = cardBody.getElementsByTagName("h2");
+                    var name = cleanText(allH2[0].innerText);
+                    var number = cleanNumber(allH2[1].innerText);
+
+                    if (coins < 20) {
+                        alert("Not enough coins. You need at least 20 coins to make a call.");
+                        return;
+                    }
+
+                    coins = coins - 20;
+                    coinCountSpan.innerText = coins;
+
+                    var now = new Date();
+                    var timeText = now.toLocaleString();
+
+                    alert("Calling " + name + " at " + number + "\nTime: " + timeText + "\n-20 coins deducted");
+
+                    addToHistory(name, number, timeText);
+                };
+            }
+        });
+    </script>
+
+
 </body>
 
 </html>
